@@ -1,0 +1,6 @@
+name: ShopkeepersEI
+version: '1.0-SNAPSHOT'
+main: es.redactado.shopkeepersEI.ShopkeepersEI
+api-version: '1.20'
+depend: [Shopkeepers]
+softdepend: [ExecutableItems, SCore]
