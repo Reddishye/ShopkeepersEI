@@ -18,7 +18,7 @@ repositories {
     }
 
     maven {
-        url = uri("https://repo.projectshard.dev/repository/snapshots/")
+        url = uri("https://raw.githubusercontent.com/Shopkeepers/Repository/main/releases/")
     }
 }
 
@@ -36,11 +36,11 @@ dependencies {
     implementation "net.kyori:adventure-api:4.16.0" // adventure api
     implementation "org.slf4j:slf4j-api:2.0.0-alpha1" // logging
 
-    compileOnly 'com.nisovin.shopkeepers:ShopkeepersAPI:2.23.1-20241003.151032-2'
+    compileOnly 'com.nisovin.shopkeepers:ShopkeepersAPI:2.24.0'
 
     compileOnly "org.projectlombok:lombok:1.18.32" // lombok
 
-    implementation files('src/main/resources/SCore.jar') // SCore plugin (EI)
+    implementation files('libs/SCore-5.25.12.24.jar') // SCore plugin (EI)
     // to add: ExecutableBlocks, ExecutableEvents, Oraxen, MMOItems
 }
 

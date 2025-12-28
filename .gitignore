@@ -23,7 +23,7 @@ atlassian-ide-plugin.xml
 *.ctxt
 
 # Package Files #
-*.jar
+# *.jar # We want to include external libraries
 *.war
 *.nar
 *.ear
@@ -117,3 +117,28 @@ runs/
 
 # Avoid ignoring Gradle wrapper jar file (.jar files are usually ignored)
 !gradle-wrapper.jar
+
+# Eclipse
+
+.project
+.metadata
+.gradle/
+bin/
+target/
+build/
+tmp/
+*.tmp
+*.bak
+*.swp
+*~.nib
+local.properties
+.classpath
+/.settings/
+**/.settings/*
+# Include JDT preference files for use by ECJ compiler (null analysis):
+!org.eclipse.jdt.core.prefs
+.loadpath
+.flattened-pom.xml
+
+# Locally stored "Eclipse launch configurations"
+*.launch
