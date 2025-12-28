@@ -36,7 +36,7 @@ jobs:
     # Upload workflow artifacts to allow the inspection of build results.
     # These are only retained for a few days.
     - name: Stage artifacts for upload
-      run: mkdir staging && cp build/*.jar staging
+      run: mkdir staging && cp build/libs/*.jar staging
     - name: Upload artifacts
       uses: actions/upload-artifact@v4
       with:
