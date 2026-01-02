@@ -5,6 +5,13 @@ on:
   pull_request:
     types: [opened, synchronize, reopened]
   workflow_dispatch:
+    inputs:
+      # Note: Make sure to select a tag when dispatching the workflow.
+      publish:
+        description: 'Publish to Github?'
+        required: false
+        type: boolean
+        default: false
 
 jobs:
   build:
@@ -41,3 +48,10 @@ jobs:
       uses: actions/upload-artifact@v4
       with:
         path: staging
+    - name: Publish to Github
+      if: ${{ github.event.inputs.publish == 'true' && github.ref_type == 'tag' }}
+      uses: softprops/action-gh-release@v2
+      with:
+        files: staging/**
+        fail_on_unmatched_files: true
+        draft: true
