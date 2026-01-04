@@ -1,71 +1,156 @@
 package es.redactado.shopkeepersEI;
 
-import com.google.inject.Inject;
-import com.google.inject.Singleton;
-import es.redactado.shopkeepersEI.config.Config;
-import es.redactado.shopkeepersEI.config.ConfigContainer;
-import net.kyori.adventure.audience.Audience;
-import net.kyori.adventure.platform.bukkit.BukkitAudiences;
-import net.kyori.adventure.text.minimessage.MiniMessage;
-import org.bukkit.plugin.java.JavaPlugin;
+import es.redactado.shopkeepersEI.utils.ColorTranslator;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.serializer.ansi.ANSIComponentSerializer;
 
-@Singleton
+import java.io.PrintStream;
+import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
+
+
+// this logger is not that bad eh
+// todo: adapt logger format cuz rn feels like avg logback config
 public class Logger {
-    private final MiniMessage miniMessage;
+
+    private static final String RESET = "\u001B[0m";
+    private static final DateTimeFormatter TIME_FORMAT = DateTimeFormatter.ofPattern("HH:mm:ss");
+    private static final ANSIComponentSerializer ANSI = ANSIComponentSerializer.ansi();
+
     private final String prefix;
-    private final Audience console;
-    private final ConfigContainer<Config> configContainer;
-    private final Config config;
+    private final PrintStream out;
+    private LogLevel minLevel;
 
-    @Inject
-    public Logger(JavaPlugin plugin, ConfigContainer<Config> configContainer) {
-        this.miniMessage = MiniMessage.miniMessage();
-        this.console = BukkitAudiences.create(plugin).console();
-        this.configContainer = configContainer;
-        this.config = configContainer.get();
-        this.prefix =
-                (config.messages.prefix != null && !config.messages.prefix.isEmpty())
-                        ? config.messages.prefix
-                        : "<#eb64f8><bold>ShopkeepersEI<reset> <dark_gray>» ";
-    }
+    public enum LogLevel {
+        TRACE(0, "\u001B[90m", "TRACE  ", "&#999999"),
+        DEBUG(1, "\u001B[36m", "DEBUG  ", "&#00FFFF"),
+        INFO(2, "\u001B[32m", "INFO   ", "&#00FF00"),
+        SUCCESS(2, "\u001B[92m", "SUCCESS", "&#00FF88"),
+        WARN(3, "\u001B[33m", "WARN   ", "&#FFAA00"),
+        ERROR(4, "\u001B[31m", "ERROR  ", "&#FF0000"),
+        FATAL(5, "\u001B[91;1m", "FATAL  ", "&#FF0000");
 
-    public void info(String message) {
-        log(LogLevel.INFO, message);
-    }
+        final int priority;
+        final String ansi;
+        final String name;
+        final String hex;
 
-    public void warn(String message) {
-        log(LogLevel.WARN, message);
-    }
+        LogLevel(int priority, String ansi, String name, String hex) {
+            this.priority = priority;
+            this.ansi = ansi;
+            this.name = name;
+            this.hex = hex;
+        }
 
-    public void error(String message) {
-        log(LogLevel.ERROR, message);
-    }
-
-    public void debug(String message) {
-        if (config.isDebug) {
-            log(LogLevel.DEBUG, message);
+        boolean shouldLog(LogLevel min) {
+            return this.priority >= min.priority;
         }
     }
 
-    private void log(LogLevel level, String message) {
-        String formattedMessage = prefix + level.getColor() + message;
-        console.sendMessage(miniMessage.deserialize(formattedMessage));
+    public Logger(String prefix) {
+        this(prefix, System.out, LogLevel.INFO);
     }
 
-    private enum LogLevel {
-        INFO("<#f9b4eb>"),
-        WARN("<#f9e5b4>"),
-        ERROR("<#f9beb4>"),
-        DEBUG("<#b4c8f9>");
+    public Logger(String prefix, LogLevel minLevel) {
+        this(prefix, System.out, minLevel);
+    }
 
-        private final String color;
+    public Logger(String prefix, PrintStream out, LogLevel minLevel) {
+        this.prefix = prefix;
+        this.out = out;
+        this.minLevel = minLevel;
+    }
 
-        LogLevel(String color) {
-            this.color = color;
+    public void trace(String msg) {
+        log(LogLevel.TRACE, msg);
+    }
+
+    public void debug(String msg) {
+        log(LogLevel.DEBUG, msg);
+    }
+
+    public void info(String msg) {
+        log(LogLevel.INFO, msg);
+    }
+
+    public void success(String msg) {
+        log(LogLevel.SUCCESS, msg);
+    }
+
+    public void warn(String msg) {
+        log(LogLevel.WARN, msg);
+    }
+
+    public void error(String msg) {
+        log(LogLevel.ERROR, msg);
+    }
+
+    public void error(String msg, Throwable t) {
+        log(LogLevel.ERROR, msg);
+        if (t != null) t.printStackTrace(out);
+    }
+
+    public void fatal(String msg) {
+        log(LogLevel.FATAL, msg);
+    }
+
+    public void fatal(String msg, Throwable t) {
+        log(LogLevel.FATAL, msg);
+        if (t != null) t.printStackTrace(out);
+    }
+
+    public void log(LogLevel level, String msg) {
+        if (!level.shouldLog(minLevel)) return;
+
+        StringBuilder sb = new StringBuilder(256);
+        String time = LocalTime.now().format(TIME_FORMAT);
+
+        sb.append("\u001B[90m").append(time).append(RESET).append(" ");
+        sb.append(level.ansi).append(level.name).append("|").append(RESET).append(" ");
+
+        if (prefix != null && !prefix.isEmpty()) {
+            sb.append("\u001B[96m[").append(prefix).append("]").append(RESET).append(" ");
         }
 
-        public String getColor() {
-            return color;
-        }
+        Component component = ColorTranslator.translate(msg);
+        String ansiMsg = ANSI.serialize(component);
+        sb.append(ansiMsg);
+
+        out.println(sb);
+    }
+
+    public void separator() {
+        out.println("\u001B[90m" + "━".repeat(80) + RESET);
+    }
+
+    public void header(String title) {
+        separator();
+        info("<b><gradient:#00FF88:#00FFFF>" + title + "</gradient></b>");
+        separator();
+    }
+
+    public void setMinLevel(LogLevel level) {
+        this.minLevel = level;
+    }
+
+    public LogLevel getMinLevel() {
+        return minLevel;
+    }
+
+    public boolean isDebugEnabled() {
+        return LogLevel.DEBUG.shouldLog(minLevel);
+    }
+
+    public boolean isTraceEnabled() {
+        return LogLevel.TRACE.shouldLog(minLevel);
+    }
+
+    public static Logger create(String prefix) {
+        return new Logger(prefix);
+    }
+
+    public static Logger create(String prefix, LogLevel level) {
+        return new Logger(prefix, level);
     }
 }
+// redactado was also, again, for the fourth time, here
