@@ -1,6 +1,7 @@
 plugins {
     id 'java'
-    id 'com.github.johnrengelman.shadow' version '8.1.1'
+    id("com.gradleup.shadow") version "9.0.0-beta15"
+    id("com.diffplug.spotless") version "7.2.1"
 }
 
 ext.getGitHash = { ->
@@ -101,5 +102,26 @@ processResources {
     filteringCharset 'UTF-8'
     filesMatching('plugin.yml') {
         expand props
+    }
+}
+
+spotless {
+    //ratchetFrom("origin/main") // Uncomment in case of working in a feature branch (makes changes only to files on that branch)
+
+    format("misc") {
+        target(
+                "*.gradle.kts",
+                ".gitattributes",
+                ".gitignore"
+        )
+
+        trimTrailingWhitespace()
+        endWithNewline()
+    }
+
+    java {
+        googleJavaFormat("1.26.0").aosp().reflowLongStrings().skipJavadocFormatting()
+        formatAnnotations()
+        removeUnusedImports()
     }
 }
