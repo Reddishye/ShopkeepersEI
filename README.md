@@ -1,5 +1,7 @@
 # ShopkeepersEI - ExecutableItems integration for Shopkeepers
 
+[![Development Build](https://github.com/Reddishye/ShopkeepersEI/actions/workflows/prerelease.yml/badge.svg)](https://github.com/Reddishye/ShopkeepersEI/actions/workflows/prerelease.yml) [![Release](https://github.com/Reddishye/ShopkeepersEI/actions/workflows/release.yml/badge.svg)](https://github.com/Reddishye/ShopkeepersEI/actions/workflows/release.yml)
+
 This is a Bukkit plugin that integrates **ExecutableItems** with the **Shopkeepers** plugin: With this plugin, shopkeepers can automatically update any ExecutableItems they contain to their latest version.
 
 ## Prerequisites
