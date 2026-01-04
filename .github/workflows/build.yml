@@ -1,0 +1,57 @@
+name: Build
+
+on:
+  push:
+  pull_request:
+    types: [opened, synchronize, reopened]
+  workflow_dispatch:
+    inputs:
+      # Note: Make sure to select a tag when dispatching the workflow.
+      publish:
+        description: 'Publish to Github?'
+        required: false
+        type: boolean
+        default: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+    - name: Set up JDK
+      uses: actions/setup-java@v4
+      with:
+        java-version: '21'
+        distribution: 'zulu'
+    - name: Cache Maven packages
+      uses: actions/cache@v4
+      with:
+        path: ~/.m2
+        key: ${{ runner.os }}-m2-${{ hashFiles('**/*.gradle*', '**/libs.versions.toml', '**/gradle-wrapper.properties') }}
+        restore-keys: |
+          ${{ runner.os }}-m2
+    - name: Cache Gradle packages
+      uses: actions/cache@v4
+      with:
+        path: ~/.gradle/caches
+        key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/libs.versions.toml', '**/gradle-wrapper.properties') }}
+        restore-keys: |
+          ${{ runner.os }}-gradle
+    - name: Build project
+      run: ./gradlew build
+    # Upload workflow artifacts to allow the inspection of build results.
+    # These are only retained for a few days.
+    - name: Stage artifacts for upload
+      run: mkdir staging && cp build/libs/*.jar staging
+    - name: Upload artifacts
+      uses: actions/upload-artifact@v4
+      with:
+        path: staging
+    - name: Publish to Github
+      if: ${{ github.event.inputs.publish == 'true' && github.ref_type == 'tag' }}
+      uses: softprops/action-gh-release@v2
+      with:
+        files: staging/**
+        fail_on_unmatched_files: true
+        draft: true
