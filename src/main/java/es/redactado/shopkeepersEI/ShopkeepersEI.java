@@ -4,42 +4,41 @@ import com.google.inject.Guice;
 import com.google.inject.Injector;
 import com.google.inject.Key;
 import com.ssomar.score.api.executableitems.ExecutableItemsAPI;
+import es.redactado.shopkeepersEI.command.MainCommand;
 import es.redactado.shopkeepersEI.config.Config;
 import es.redactado.shopkeepersEI.config.ConfigContainer;
-import es.redactado.shopkeepersEI.config.ConfigMapper;
 import es.redactado.shopkeepersEI.events.HandleUpdateItemEvent;
 import es.redactado.shopkeepersEI.events.ShopkeeperItemUpdateListener;
+
+import java.lang.reflect.Type;
 import java.util.List;
 import org.bukkit.Bukkit;
-import org.bukkit.command.Command;
-import org.bukkit.command.CommandExecutor;
-import org.bukkit.command.PluginCommand;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.jetbrains.annotations.NotNull;
+import revxrsal.commands.Lamp;
+import revxrsal.commands.annotation.SuggestWith;
+import revxrsal.commands.annotation.list.AnnotationList;
+import revxrsal.commands.autocomplete.SuggestionProvider;
+import revxrsal.commands.bukkit.BukkitLamp;
+import revxrsal.commands.bukkit.actor.BukkitCommandActor;
 
 public final class ShopkeepersEI extends JavaPlugin {
     private Logger logger;
-    private ConfigMapper configMapper;
     private Injector injector;
     private Plugin executableItems;
+    private ConfigContainer<Config> configContainer;
 
     @Override
     public void onEnable() {
-        injector = Guice.createInjector(new GuiceModule(this));
+        logger = Logger.create("ShopkeepersEI");
+        injector = Guice.createInjector(new GuiceModule(this, logger));
         logger = injector.getInstance(Logger.class);
-        configMapper = injector.getInstance(ConfigMapper.class);
+        configContainer = injector.getInstance(new Key<>() {});
 
-        ConfigContainer<Config> configContainer =
-                injector.getInstance(new Key<ConfigContainer<Config>>() {});
-        configMapper.register(Config.class, configContainer);
+        logger.setMinLevel(configContainer.get().logLevel);
 
-        Config config = configContainer.get();
-
-        if (config.isDebug) {
-            logger.info(
-                    "Debug mode enabled, unless you want a bunch of messages, you should disable"
-                            + " it.");
-        }
+        logger.debug("Debug mode enabled, unless you want a bunch of messages, you should disable it.");
 
         logger.info("Plugin enabled.");
 
@@ -57,6 +56,36 @@ public final class ShopkeepersEI extends JavaPlugin {
                                     .toString());
         }
 
+        // this code is so fucking ugly, sorryyyy
+        Lamp<BukkitCommandActor> lamp = BukkitLamp.builder(this)
+                .suggestionProviders(providers -> {
+                    providers.addProviderFactory(new SuggestionProvider.Factory<BukkitCommandActor>() {
+                        @Override
+                        public SuggestionProvider<BukkitCommandActor> create(
+                                @NotNull Type type,
+                                @NotNull AnnotationList annotations,
+                                @NotNull Lamp<BukkitCommandActor> lampInstance
+                        ) {
+                            SuggestWith suggestWith = annotations.get(SuggestWith.class);
+
+                            if (suggestWith != null) {
+                                Class<?> providerClass = suggestWith.value();
+                                try {
+                                    return (SuggestionProvider<BukkitCommandActor>) injector.getInstance(providerClass);
+                                } catch (Exception e) {
+                                    logger.error("Failed to create SuggestionProvider for " + providerClass.getName() + ": " + e.getMessage());
+                                }
+                            }
+                            return null;
+                        }
+                    });
+                })
+                .build();
+        // here the ugly code ends (hopefully)
+
+        // register command
+        lamp.register(injector.getInstance(MainCommand.class));
+
         // register event
         getServer()
                 .getPluginManager()
@@ -69,22 +98,5 @@ public final class ShopkeepersEI extends JavaPlugin {
     @Override
     public void onDisable() {
         // Plugin shutdown logic
-    }
-
-    public void registerCommands(List<Command> commands) {
-        commands.forEach(
-                command -> {
-                    PluginCommand bukkitCommand = getCommand(command.getName());
-                    if (bukkitCommand != null) {
-                        bukkitCommand.setExecutor(
-                                (CommandExecutor) injector.getInstance(command.getClass()));
-                        logger.debug("Registered command: " + command.getName());
-                    } else {
-                        logger.error(
-                                "Command not found: "
-                                        + command.getName()
-                                        + ". Did you register it in plugin.yml?");
-                    }
-                });
     }
 }
