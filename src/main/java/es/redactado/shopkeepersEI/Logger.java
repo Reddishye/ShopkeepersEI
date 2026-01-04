@@ -1,13 +1,11 @@
 package es.redactado.shopkeepersEI;
 
 import es.redactado.shopkeepersEI.utils.ColorTranslator;
-import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.serializer.ansi.ANSIComponentSerializer;
-
 import java.io.PrintStream;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
-
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.serializer.ansi.ANSIComponentSerializer;
 
 // this logger is not that bad eh
 // todo: adapt logger format cuz rn feels like avg logback config

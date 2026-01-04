@@ -9,9 +9,7 @@ import es.redactado.shopkeepersEI.config.Config;
 import es.redactado.shopkeepersEI.config.ConfigContainer;
 import es.redactado.shopkeepersEI.events.HandleUpdateItemEvent;
 import es.redactado.shopkeepersEI.events.ShopkeeperItemUpdateListener;
-
 import java.lang.reflect.Type;
-import java.util.List;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -38,7 +36,8 @@ public final class ShopkeepersEI extends JavaPlugin {
 
         logger.setMinLevel(configContainer.get().logLevel);
 
-        logger.debug("Debug mode enabled, unless you want a bunch of messages, you should disable it.");
+        logger.debug(
+                "Debug mode enabled, unless you want a bunch of messages, you should disable it.");
 
         logger.info("Plugin enabled.");
 
@@ -57,30 +56,45 @@ public final class ShopkeepersEI extends JavaPlugin {
         }
 
         // this code is so fucking ugly, sorryyyy
-        Lamp<BukkitCommandActor> lamp = BukkitLamp.builder(this)
-                .suggestionProviders(providers -> {
-                    providers.addProviderFactory(new SuggestionProvider.Factory<BukkitCommandActor>() {
-                        @Override
-                        public SuggestionProvider<BukkitCommandActor> create(
-                                @NotNull Type type,
-                                @NotNull AnnotationList annotations,
-                                @NotNull Lamp<BukkitCommandActor> lampInstance
-                        ) {
-                            SuggestWith suggestWith = annotations.get(SuggestWith.class);
+        Lamp<BukkitCommandActor> lamp =
+                BukkitLamp.builder(this)
+                        .suggestionProviders(
+                                providers -> {
+                                    providers.addProviderFactory(
+                                            new SuggestionProvider.Factory<BukkitCommandActor>() {
+                                                @Override
+                                                public SuggestionProvider<BukkitCommandActor>
+                                                        create(
+                                                                @NotNull Type type,
+                                                                @NotNull AnnotationList annotations,
+                                                                @NotNull Lamp<BukkitCommandActor>
+                                                                                lampInstance) {
+                                                    SuggestWith suggestWith =
+                                                            annotations.get(SuggestWith.class);
 
-                            if (suggestWith != null) {
-                                Class<?> providerClass = suggestWith.value();
-                                try {
-                                    return (SuggestionProvider<BukkitCommandActor>) injector.getInstance(providerClass);
-                                } catch (Exception e) {
-                                    logger.error("Failed to create SuggestionProvider for " + providerClass.getName() + ": " + e.getMessage());
-                                }
-                            }
-                            return null;
-                        }
-                    });
-                })
-                .build();
+                                                    if (suggestWith != null) {
+                                                        Class<?> providerClass =
+                                                                suggestWith.value();
+                                                        try {
+                                                            return (SuggestionProvider<
+                                                                            BukkitCommandActor>)
+                                                                    injector.getInstance(
+                                                                            providerClass);
+                                                        } catch (Exception e) {
+                                                            logger.error(
+                                                                    "Failed to create"
+                                                                        + " SuggestionProvider for "
+                                                                            + providerClass
+                                                                                    .getName()
+                                                                            + ": "
+                                                                            + e.getMessage());
+                                                        }
+                                                    }
+                                                    return null;
+                                                }
+                                            });
+                                })
+                        .build();
         // here the ugly code ends (hopefully)
 
         // register command

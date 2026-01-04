@@ -7,14 +7,12 @@ import com.google.inject.name.Named;
 import es.redactado.shopkeepersEI.config.Config;
 import es.redactado.shopkeepersEI.config.ConfigContainer;
 import net.kyori.adventure.platform.bukkit.BukkitAudiences;
-import org.bukkit.plugin.java.JavaPlugin;
 
 public class GuiceModule extends AbstractModule {
     private final ShopkeepersEI plugin;
     private final Logger logger;
 
-    public GuiceModule(ShopkeepersEI plugin,
-                       Logger logger) {
+    public GuiceModule(ShopkeepersEI plugin, Logger logger) {
         this.plugin = plugin;
         this.logger = logger;
     }

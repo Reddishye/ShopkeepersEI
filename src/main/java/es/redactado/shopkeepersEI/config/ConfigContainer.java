@@ -4,12 +4,11 @@ import de.exlll.configlib.ConfigLib;
 import de.exlll.configlib.NameFormatters;
 import de.exlll.configlib.YamlConfigurationProperties;
 import de.exlll.configlib.YamlConfigurations;
+import es.redactado.shopkeepersEI.Logger;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.atomic.AtomicReference;
-
-import es.redactado.shopkeepersEI.Logger;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -31,7 +30,7 @@ public class ConfigContainer<C> {
                             """
                             Shopkeepers ExecutableItems Integration (Unofficial)
                             https://github.com/Reddishye/ShopkeepersEI
-                            
+
                             Feel free to create an issue on GitHub if you find any bugs or have any suggestions.
                             """)
                     .build();

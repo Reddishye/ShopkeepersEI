@@ -12,5 +12,4 @@ public class Config {
     public Logger.LogLevel logLevel = Logger.LogLevel.INFO;
 
     public MessagesPartial messages = new MessagesPartial();
-
 }
