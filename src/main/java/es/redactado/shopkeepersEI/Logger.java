@@ -1,9 +1,9 @@
 package es.redactado.shopkeepersEI;
 
-import es.redactado.shopkeepersEI.config.Config;
-import es.redactado.shopkeepersEI.config.ConfigContainer;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
+import es.redactado.shopkeepersEI.config.Config;
+import es.redactado.shopkeepersEI.config.ConfigContainer;
 import net.kyori.adventure.audience.Audience;
 import net.kyori.adventure.platform.bukkit.BukkitAudiences;
 import net.kyori.adventure.text.minimessage.MiniMessage;
@@ -23,9 +23,10 @@ public class Logger {
         this.console = BukkitAudiences.create(plugin).console();
         this.configContainer = configContainer;
         this.config = configContainer.get();
-        this.prefix = (config.messages.prefix != null && !config.messages.prefix.isEmpty())
-                ? config.messages.prefix
-                : "<#eb64f8><bold>ShopkeepersEI<reset> <dark_gray>» ";
+        this.prefix =
+                (config.messages.prefix != null && !config.messages.prefix.isEmpty())
+                        ? config.messages.prefix
+                        : "<#eb64f8><bold>ShopkeepersEI<reset> <dark_gray>» ";
     }
 
     public void info(String message) {

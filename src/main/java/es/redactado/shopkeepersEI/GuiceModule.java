@@ -3,17 +3,15 @@ package es.redactado.shopkeepersEI;
 import com.google.inject.AbstractModule;
 import com.google.inject.Provides;
 import com.google.inject.name.Named;
-import com.ssomar.score.api.executableitems.config.ExecutableItemsManagerInterface;
 import es.redactado.shopkeepersEI.config.Config;
-import es.redactado.shopkeepersEI.config.ConfigMapper;
 import es.redactado.shopkeepersEI.config.ConfigContainer;
-import net.kyori.adventure.platform.bukkit.BukkitAudiences;
-import org.spongepowered.configurate.yaml.NodeStyle;
-import org.spongepowered.configurate.yaml.YamlConfigurationLoader;
-import org.bukkit.plugin.java.JavaPlugin;
-
+import es.redactado.shopkeepersEI.config.ConfigMapper;
 import java.io.IOException;
 import java.nio.file.Path;
+import net.kyori.adventure.platform.bukkit.BukkitAudiences;
+import org.bukkit.plugin.java.JavaPlugin;
+import org.spongepowered.configurate.yaml.NodeStyle;
+import org.spongepowered.configurate.yaml.YamlConfigurationLoader;
 
 public class GuiceModule extends AbstractModule {
     private final JavaPlugin plugin;
@@ -36,20 +34,18 @@ public class GuiceModule extends AbstractModule {
 
     @Provides
     private ConfigContainer<Config> provideConfigContainer(
-            @Named("config.yml") String fileName,
-            ConfigMapper configMapper
-    ) throws IOException {
+            @Named("config.yml") String fileName, ConfigMapper configMapper) throws IOException {
         Path configPath = plugin.getDataFolder().toPath().resolve(fileName);
-        YamlConfigurationLoader loader = YamlConfigurationLoader.builder()
-                .nodeStyle(NodeStyle.BLOCK)
-                .indent(2)
-                .defaultOptions(opts -> opts
-                        .shouldCopyDefaults(true)
-                )
-                .path(configPath)
-                .build();
+        YamlConfigurationLoader loader =
+                YamlConfigurationLoader.builder()
+                        .nodeStyle(NodeStyle.BLOCK)
+                        .indent(2)
+                        .defaultOptions(opts -> opts.shouldCopyDefaults(true))
+                        .path(configPath)
+                        .build();
 
-        ConfigContainer<Config> configContainer = ConfigContainer.load(plugin.getDataFolder().toPath(), Config.class, fileName);
+        ConfigContainer<Config> configContainer =
+                ConfigContainer.load(plugin.getDataFolder().toPath(), Config.class, fileName);
         configMapper.register(Config.class, configContainer);
 
         return configContainer;
@@ -66,14 +62,13 @@ public class GuiceModule extends AbstractModule {
     }
 
     @Provides
-    private YamlConfigurationLoader provideYamlConfigurationLoader(@Named("config.yml") String fileName) {
+    private YamlConfigurationLoader provideYamlConfigurationLoader(
+            @Named("config.yml") String fileName) {
         Path configPath = plugin.getDataFolder().toPath().resolve(fileName);
         return YamlConfigurationLoader.builder()
                 .nodeStyle(NodeStyle.BLOCK)
                 .indent(2)
-                .defaultOptions(opts -> opts
-                        .shouldCopyDefaults(true)
-                )
+                .defaultOptions(opts -> opts.shouldCopyDefaults(true))
                 .path(configPath)
                 .build();
     }

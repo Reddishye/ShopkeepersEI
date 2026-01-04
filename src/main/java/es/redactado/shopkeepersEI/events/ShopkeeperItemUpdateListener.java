@@ -1,11 +1,8 @@
 package es.redactado.shopkeepersEI.events;
 
-import es.redactado.shopkeepersEI.ShopkeepersEI;
+import com.nisovin.shopkeepers.api.events.UpdateItemEvent;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
-import org.bukkit.event.server.PluginEnableEvent;
-
-import com.nisovin.shopkeepers.api.events.UpdateItemEvent;
 
 public class ShopkeeperItemUpdateListener implements Listener {
 

@@ -9,6 +9,8 @@ import java.lang.annotation.Target;
 @Target({ElementType.TYPE})
 public @interface SubCommandDataManager {
     String name();
+
     String permission() default "";
+
     String description() default "";
 }

@@ -1,7 +1,6 @@
 package es.redactado.shopkeepersEI.config;
 
 import com.google.inject.Singleton;
-
 import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
