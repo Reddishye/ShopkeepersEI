@@ -36,6 +36,8 @@ repositories {
     maven {
         url = uri("https://raw.githubusercontent.com/Shopkeepers/Repository/main/releases/")
     }
+
+    maven { url 'https://jitpack.io' }
 }
 
 dependencies {
@@ -43,7 +45,7 @@ dependencies {
 
     annotationProcessor 'org.projectlombok:lombok:1.18.42' // lombok anotation processor (used only in configurate-yaml)
 
-    implementation "org.spongepowered:configurate-yaml:4.1.2" // config files
+    implementation("de.exlll:configlib-paper:4.7.0") // Config
     implementation "com.google.inject:guice:7.0.0" // dependency injection
     implementation "net.kyori:adventure-text-serializer-plain:4.26.1" // text serializer
     implementation "net.kyori:adventure-text-serializer-legacy:4.26.1" // text serializer
@@ -54,10 +56,15 @@ dependencies {
 
     compileOnly 'com.nisovin.shopkeepers:ShopkeepersAPI:2.25.0'
 
+
     compileOnly "org.projectlombok:lombok:1.18.42" // lombok
 
-    implementation files('libs/SCore-5.25.12.24.jar') // SCore plugin (EI)
+    implementation 'com.github.Ssomar-Developement:SCore:5.25.3.9'
     // to add: ExecutableBlocks, ExecutableEvents, Oraxen, MMOItems
+
+    implementation 'com.github.Reddishye.Lamp:lamp.common:6a2f380f00'
+    implementation 'com.github.Reddishye.Lamp:lamp.bukkit:6a2f380f00'
+    implementation 'com.github.Reddishye.Lamp:lamp.brigadier:6a2f380f00'
 }
 
 
