@@ -19,13 +19,13 @@ While this plugin is running, execute the [`/shopkeepers updateItems`](https://g
 Base command.
 
 Alias: `sei`  
-Permission: `shopkeepersEI.commands`
+Permission: `shopkeepersEI.about`
 
 ### `/shopkeepersei reload`
 
 Reloads the plugin config.
 
-Permission: `mysthicCommandManager.admin`  
+Permission: `shopkeepersEI.reload`  
 
 ## Installation
 
