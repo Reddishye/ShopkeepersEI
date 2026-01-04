@@ -1,0 +1,52 @@
+name: Development Build
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  pre-release:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Read unreleased CHANGELOG
+        id: changelog
+        uses: mindsers/changelog-reader-action@v2
+        with:
+          version: Unreleased
+          path: ./CHANGELOG.md
+
+      - name: Set up JDK 21
+        uses: actions/setup-java@v4
+        with:
+          java-version: '21'
+          distribution: 'temurin'
+
+      - name: Build with Gradle
+        run: ./gradlew shadowJar --no-daemon
+
+      - name: Get short SHA
+        id: sha
+        run: echo "SHORT_SHA=$(git rev-parse --short HEAD)" >> $GITHUB_OUTPUT
+
+      - name: Create Pre-Release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: build/libs/*.jar
+          body: |
+            ## Development Build
+            
+            Commit: ${{ github.sha }}
+            
+            ${{ steps.changelog.outputs.changes }}
+          tag_name: dev-${{ steps.sha.outputs.SHORT_SHA }}
+          prerelease: true
+          name: Development Build (${{ steps.sha.outputs.SHORT_SHA }})
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
