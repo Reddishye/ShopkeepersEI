@@ -3,7 +3,7 @@ name: Development Build
 on:
   push:
     branches:
-      - main
+      - master
 
 jobs:
   pre-release:
