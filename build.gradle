@@ -2,6 +2,7 @@ plugins {
     id 'java'
     id("com.gradleup.shadow") version "9.0.0-beta15"
     id("com.diffplug.spotless") version "7.2.1"
+    id("xyz.jpenilla.run-paper") version "2.3.1"
 }
 
 ext.getGitHash = { ->
@@ -44,25 +45,25 @@ repositories {
 dependencies {
     compileOnly "org.spigotmc:spigot-api:1.20.4-R0.1-SNAPSHOT" // spigot api
 
-    annotationProcessor 'org.projectlombok:lombok:1.18.42' // lombok anotation processor (used only in configurate-yaml)
-
     implementation("de.exlll:configlib-paper:4.7.0") // Config
     implementation "com.google.inject:guice:7.0.0" // dependency injection
-    implementation "net.kyori:adventure-text-serializer-plain:4.26.1" // text serializer
-    implementation "net.kyori:adventure-text-serializer-legacy:4.26.1" // text serializer
-    implementation "net.kyori:adventure-platform-bukkit:4.3.2" // adventure platform
-    implementation "net.kyori:adventure-text-minimessage:4.26.1" // minimessage
-    implementation "net.kyori:adventure-api:4.26.1" // adventure api
-    implementation "org.slf4j:slf4j-api:2.0.0-alpha1" // logging
+
+    // spigot doesn't have adventure by default as paper does, so we need to add it
+    // high prob that some of these are redundant/not needed, but whatever
+    // todo: check which dependencies are actually needed
+    implementation "net.kyori:adventure-text-serializer-plain:4.26.1"
+    implementation "net.kyori:adventure-text-serializer-legacy:4.26.1"
+    implementation "net.kyori:adventure-platform-bukkit:4.3.2"
+    implementation "net.kyori:adventure-text-minimessage:4.26.1"
+    implementation "net.kyori:adventure-api:4.26.1"
+    implementation 'net.kyori:adventure-text-serializer-ansi:4.17.0' // ANSI Support (cuz logger)
 
     compileOnly 'com.nisovin.shopkeepers:ShopkeepersAPI:2.25.0'
-
-
-    compileOnly "org.projectlombok:lombok:1.18.42" // lombok
 
     implementation 'com.github.Ssomar-Developement:SCore:5.25.3.9'
     // to add: ExecutableBlocks, ExecutableEvents, Oraxen, MMOItems
 
+    // Since rc3 the official lamp builds are broken (for older versions as 1.20.4), so we use a jitpack build
     implementation 'com.github.Reddishye.Lamp:lamp.common:6a2f380f00'
     implementation 'com.github.Reddishye.Lamp:lamp.bukkit:6a2f380f00'
     implementation 'com.github.Reddishye.Lamp:lamp.brigadier:6a2f380f00'
