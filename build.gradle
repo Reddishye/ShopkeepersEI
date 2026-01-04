@@ -60,7 +60,7 @@ dependencies {
 
     compileOnly 'com.nisovin.shopkeepers:ShopkeepersAPI:2.25.0'
 
-    implementation 'com.github.Ssomar-Developement:SCore:5.25.3.9'
+    compileOnly 'com.github.Ssomar-Developement:SCore:5.25.3.9'
     // to add: ExecutableBlocks, ExecutableEvents, Oraxen, MMOItems
 
     // Since rc3 the official lamp builds are broken (for older versions as 1.20.4), so we use a jitpack build
@@ -91,6 +91,28 @@ tasks.withType(JavaCompile).configureEach {
 shadowJar {
     version = version
     archiveClassifier.set('') // remove the classifier
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+
+    def relocateBase = 'es.redactado.shopkeepersEI.libs'
+
+    relocate 'com.google.inject', "${relocateBase}.guice"
+    relocate 'com.google.common', "${relocateBase}.guava"
+    relocate 'javax.inject', "${relocateBase}.inject"
+    relocate 'aopalliance', "${relocateBase}.aopalliance"
+
+    relocate 'de.exlll.configlib', "${relocateBase}.configlib"
+
+    relocate 'net.kyori.adventure', "${relocateBase}.adventure"
+    relocate 'net.kyori.examination', "${relocateBase}.examination"
+    relocate 'net.kyori.option', "${relocateBase}.option"
+
+    relocate 'revxrsal.commands', "${relocateBase}.lamp"
+
+    minimize {
+        exclude(dependency('com.google.inject:.*'))
+    }
+
+    mergeServiceFiles()
 }
 
 processResources {
@@ -106,8 +128,18 @@ processResources {
     }
 }
 
+tasks {
+    runServer {
+        minecraftVersion("1.21.8")
+    }
+}
+
 spotless {
-    //ratchetFrom("origin/main") // Uncomment in case of working in a feature branch (makes changes only to files on that branch)
+
+    def currentBranch = getCurrentGitBranch()
+    if (currentBranch != 'main' && currentBranch != 'master') {
+        ratchetFrom("origin/main")
+    }
 
     format("misc") {
         target(
@@ -124,5 +156,18 @@ spotless {
         googleJavaFormat("1.26.0").aosp().reflowLongStrings().skipJavadocFormatting()
         formatAnnotations()
         removeUnusedImports()
+    }
+}
+
+def getCurrentGitBranch() {
+    try {
+        def stdout = new ByteArrayOutputStream()
+        exec {
+            commandLine 'git', 'rev-parse', '--abbrev-ref', 'HEAD'
+            standardOutput = stdout
+        }
+        return stdout.toString().trim()
+    } catch (Exception e) {
+        return 'main'
     }
 }
