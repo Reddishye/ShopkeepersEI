@@ -10,16 +10,19 @@ import net.kyori.adventure.platform.bukkit.BukkitAudiences;
 import org.bukkit.plugin.java.JavaPlugin;
 
 public class GuiceModule extends AbstractModule {
-    private final JavaPlugin plugin;
+    private final ShopkeepersEI plugin;
+    private final Logger logger;
 
-    public GuiceModule(JavaPlugin plugin) {
+    public GuiceModule(ShopkeepersEI plugin,
+                       Logger logger) {
         this.plugin = plugin;
+        this.logger = logger;
     }
 
     @Override
     protected void configure() {
-        bind(JavaPlugin.class).toInstance(plugin);
-        bind(Logger.class).asEagerSingleton();
+        bind(ShopkeepersEI.class).toInstance(plugin);
+        bind(Logger.class).toInstance(logger);
         bind(String.class).annotatedWith(Named.class).toInstance("config.yml");
     }
 
