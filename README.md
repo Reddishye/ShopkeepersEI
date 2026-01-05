@@ -1,4 +1,4 @@
-# ShopkeepersEI - ExecutableItems integration for Shopkeepers
+# ShopkeepersEI - ExecutableItems integration for Shopkeepers ![GitHub Downloads (all assets, all releases)](https://img.shields.io/github/downloads/Reddishye/ShopkeepersEI/total)
 
 [![Development Build](https://github.com/Reddishye/ShopkeepersEI/actions/workflows/prerelease.yml/badge.svg)](https://github.com/Reddishye/ShopkeepersEI/actions/workflows/prerelease.yml) [![Release](https://github.com/Reddishye/ShopkeepersEI/actions/workflows/release.yml/badge.svg)](https://github.com/Reddishye/ShopkeepersEI/actions/workflows/release.yml)
 
