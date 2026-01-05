@@ -6,8 +6,11 @@ This is a Bukkit plugin that integrates **ExecutableItems** with the **Shopkeepe
 
 ## Prerequisites
 
-- This plugin might only support [Paper](https://papermc.io/) currently.
-- [Shopkeepers plugin](https://www.spigotmc.org/resources/shopkeepers.80756/)
+> [!IMPORTANT]
+> This plugin has only been tested with [Paper](https://papermc.io/) currently, Spigot should work.
+
+- Spigot (Or any fork such as: Paper, Purpur, Pufferfish...) **1.20.4+**
+- [Shopkeepers plugin](https://www.spigotmc.org/resources/shopkeepers.80756/) **2.23.1+**
 - [ExecutableItems plugin](https://www.spigotmc.org/resources/custom-items-plugin-executable-items.77578/)
 
 ## Usage
