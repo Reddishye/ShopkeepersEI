@@ -53,7 +53,7 @@ dependencies {
     // todo: check which dependencies are actually needed
     implementation "net.kyori:adventure-text-serializer-plain:4.26.1"
     implementation "net.kyori:adventure-text-serializer-legacy:4.26.1"
-    implementation "net.kyori:adventure-platform-bukkit:4.3.2"
+    implementation "net.kyori:adventure-platform-bukkit:4.4.1"
     implementation "net.kyori:adventure-text-minimessage:4.26.1"
     implementation "net.kyori:adventure-api:4.26.1"
     implementation 'net.kyori:adventure-text-serializer-ansi:4.17.0' // ANSI Support (cuz logger)
