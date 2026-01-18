@@ -43,7 +43,7 @@ repositories {
 }
 
 dependencies {
-    compileOnly "org.spigotmc:spigot-api:1.20.4-R0.1-SNAPSHOT" // spigot api
+    compileOnly "org.spigotmc:spigot-api:1.21.11-R0.2-SNAPSHOT" // spigot api
 
     implementation("de.exlll:configlib-paper:4.8.0") // Config
     implementation "com.google.inject:guice:7.0.0" // dependency injection
