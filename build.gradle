@@ -10,12 +10,11 @@ ext.getGitHash = { ->
     exec {
         commandLine 'git', 'rev-parse', '--short', 'HEAD'
         standardOutput = stdout
-        ignoreExitValue = true // Ignore error if there is no Git commit yet
+        ignoreExitValue = true
     }
     return stdout.toString().trim() ?: "0"
 }
 
-// We embed the git hash into jar files, and also use it for the plugin version of snapshot builds.
 ext.buildVersion = version + '+' + getGitHash()
 ext.isSnapshot = version.contains('-SNAPSHOT')
 ext.pluginVersion = isSnapshot ? buildVersion : version
@@ -34,41 +33,33 @@ repositories {
         name = "sonatype"
         url = "https://oss.sonatype.org/content/groups/public/"
     }
-
     maven {
         url = uri("https://raw.githubusercontent.com/Shopkeepers/Repository/main/releases/")
     }
-
     maven { url 'https://jitpack.io' }
 }
 
 dependencies {
-    compileOnly "org.spigotmc:spigot-api:1.20.4-R0.1-SNAPSHOT" // spigot api
+    compileOnly "org.spigotmc:spigot-api:1.20.4-R0.1-SNAPSHOT"
 
-    implementation("de.exlll:configlib-paper:4.8.0") // Config
-    implementation "com.google.inject:guice:7.0.0" // dependency injection
+    implementation("de.exlll:configlib-paper:4.8.0")
+    implementation "com.google.inject:guice:7.0.0"
 
-    // spigot doesn't have adventure by default as paper does, so we need to add it
-    // high prob that some of these are redundant/not needed, but whatever
-    // todo: check which dependencies are actually needed
     implementation "net.kyori:adventure-text-serializer-plain:4.26.1"
     implementation "net.kyori:adventure-text-serializer-legacy:4.26.1"
     implementation "net.kyori:adventure-platform-bukkit:4.4.1"
     implementation "net.kyori:adventure-text-minimessage:4.26.1"
     implementation "net.kyori:adventure-api:4.26.1"
-    implementation 'net.kyori:adventure-text-serializer-ansi:4.17.0' // ANSI Support (cuz logger)
+    implementation 'net.kyori:adventure-text-serializer-ansi:4.17.0'
 
     compileOnly 'com.nisovin.shopkeepers:ShopkeepersAPI:2.25.0'
 
     compileOnly 'com.github.Ssomar-Developement:SCore:5.25.3.9'
-    // to add: ExecutableBlocks, ExecutableEvents, Oraxen, MMOItems
 
-    // Since rc3 the official lamp builds are broken (for older versions as 1.20.4), so we use a jitpack build
     implementation 'com.github.Reddishye.Lamp:lamp.common:6a2f380f00'
     implementation 'com.github.Reddishye.Lamp:lamp.bukkit:6a2f380f00'
     implementation 'com.github.Reddishye.Lamp:lamp.brigadier:6a2f380f00'
 }
-
 
 def targetJavaVersion = 21
 java {
@@ -90,7 +81,7 @@ tasks.withType(JavaCompile).configureEach {
 
 shadowJar {
     version = version
-    archiveClassifier.set('') // remove the classifier
+    archiveClassifier.set('')
     duplicatesStrategy = DuplicatesStrategy.EXCLUDE
 
     def relocateBase = 'es.redactado.shopkeepersEI.libs'
@@ -135,10 +126,14 @@ tasks {
 }
 
 spotless {
-
     def currentBranch = getCurrentGitBranch()
-    if (currentBranch != 'main' && currentBranch != 'master') {
-        ratchetFrom("origin/main")
+    def mainBranch = getMainBranch()
+    
+    if (currentBranch != mainBranch && mainBranch != null) {
+        println "Spotless: Formatting changes from origin/${mainBranch}"
+        ratchetFrom("origin/${mainBranch}")
+    } else {
+        println "Spotless: Formatting all files"
     }
 
     format("misc") {
@@ -165,9 +160,54 @@ def getCurrentGitBranch() {
         exec {
             commandLine 'git', 'rev-parse', '--abbrev-ref', 'HEAD'
             standardOutput = stdout
+            ignoreExitValue = true
         }
-        return stdout.toString().trim()
+        return stdout.toString().trim() ?: null
     } catch (Exception e) {
-        return 'main'
+        return null
+    }
+}
+
+def getMainBranch() {
+    try {
+        def stdout = new ByteArrayOutputStream()
+        exec {
+            commandLine 'git', 'symbolic-ref', 'refs/remotes/origin/HEAD'
+            standardOutput = stdout
+            ignoreExitValue = true
+        }
+        def result = stdout.toString().trim()
+        if (result) {
+            return result.replaceFirst('refs/remotes/origin/', '')
+        }
+    } catch (Exception ignored) {}
+    
+    def branches = ['main', 'master']
+    for (branch in branches) {
+        if (gitRefExists("origin/${branch}")) {
+            return branch
+        }
+    }
+    
+    for (branch in branches) {
+        if (gitRefExists(branch)) {
+            return branch
+        }
+    }
+    
+    return null
+}
+
+def gitRefExists(String ref) {
+    try {
+        def result = exec {
+            commandLine 'git', 'rev-parse', '--verify', ref
+            standardOutput = new ByteArrayOutputStream()
+            errorOutput = new ByteArrayOutputStream()
+            ignoreExitValue = true
+        }
+        return result.exitValue == 0
+    } catch (Exception e) {
+        return false
     }
 }
