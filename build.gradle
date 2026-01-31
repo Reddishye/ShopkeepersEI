@@ -55,7 +55,7 @@ dependencies {
     implementation "net.kyori:adventure-platform-bukkit:4.4.1"
     implementation "net.kyori:adventure-text-minimessage:4.26.1"
     implementation "net.kyori:adventure-api:4.26.1"
-    implementation 'net.kyori:adventure-text-serializer-ansi:4.17.0' // ANSI Support (cuz logger)
+    implementation 'net.kyori:adventure-text-serializer-ansi:4.26.1' // ANSI Support (cuz logger)
 
     compileOnly 'com.nisovin.shopkeepers:ShopkeepersAPI:2.25.0'
 
