@@ -8,10 +8,24 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Changed
+- **Dependency updates**
+    - Bumped `com.diffplug.spotless` from 8.1.0 to 8.2.0
+    - Bumped `com.gradleup.shadow` from 9.0.0-beta15 to 9.3.1
+    - Bumped `de.exlll:configlib-paper` from 4.7.0 to 4.8.0
+    - Bumped `net.kyori:adventure-platform-bukkit` from 4.3.2 to 4.4.1
+    - Bumped `net.kyori:adventure-text-serializer-ansi` from 4.17.0 to 4.26.1
 
-### Added
+### Fixed
+- Fixed Spotless branch detection in CI/CD environments
+- Resolved "No such reference 'origin/main'" error in Gradle builds
 
 ### Technical
+- Refactored build.gradle for improved Git handling and branch autodetection
+- Enhanced Spotless configuration to automatically detect main branch (main/master)
+- Added `gitRefExists()` helper method to verify Git references before usage
+- Improved error handling in Git-related Gradle tasks
+- Added informative logging for Spotless formatting operations
+- Updated build.gradle comments and documentation
 
 ## [1.0.1] - 2026-01-04
 
