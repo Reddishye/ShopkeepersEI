@@ -10,12 +10,11 @@ ext.getGitHash = { ->
     exec {
         commandLine 'git', 'rev-parse', '--short', 'HEAD'
         standardOutput = stdout
-        ignoreExitValue = true // Ignore error if there is no Git commit yet
+        ignoreExitValue = true
     }
     return stdout.toString().trim() ?: "0"
 }
 
-// We embed the git hash into jar files, and also use it for the plugin version of snapshot builds.
 ext.buildVersion = version + '+' + getGitHash()
 ext.isSnapshot = version.contains('-SNAPSHOT')
 ext.pluginVersion = isSnapshot ? buildVersion : version
@@ -135,10 +134,14 @@ tasks {
 }
 
 spotless {
-
     def currentBranch = getCurrentGitBranch()
-    if (currentBranch != 'main' && currentBranch != 'master') {
-        ratchetFrom("origin/main")
+    def mainBranch = getMainBranch()
+    
+    if (currentBranch != mainBranch && mainBranch != null) {
+        println "Spotless: Formatting changes from origin/${mainBranch}"
+        ratchetFrom("origin/${mainBranch}")
+    } else {
+        println "Spotless: Formatting all files"
     }
 
     format("misc") {
@@ -165,9 +168,54 @@ def getCurrentGitBranch() {
         exec {
             commandLine 'git', 'rev-parse', '--abbrev-ref', 'HEAD'
             standardOutput = stdout
+            ignoreExitValue = true
         }
-        return stdout.toString().trim()
+        return stdout.toString().trim() ?: null
     } catch (Exception e) {
-        return 'main'
+        return null
+    }
+}
+
+def getMainBranch() {
+    try {
+        def stdout = new ByteArrayOutputStream()
+        exec {
+            commandLine 'git', 'symbolic-ref', 'refs/remotes/origin/HEAD'
+            standardOutput = stdout
+            ignoreExitValue = true
+        }
+        def result = stdout.toString().trim()
+        if (result) {
+            return result.replaceFirst('refs/remotes/origin/', '')
+        }
+    } catch (Exception ignored) {}
+    
+    def branches = ['main', 'master']
+    for (branch in branches) {
+        if (gitRefExists("origin/${branch}")) {
+            return branch
+        }
+    }
+    
+    for (branch in branches) {
+        if (gitRefExists(branch)) {
+            return branch
+        }
+    }
+    
+    return null
+}
+
+def gitRefExists(String ref) {
+    try {
+        def result = exec {
+            commandLine 'git', 'rev-parse', '--verify', ref
+            standardOutput = new ByteArrayOutputStream()
+            errorOutput = new ByteArrayOutputStream()
+            ignoreExitValue = true
+        }
+        return result.exitValue == 0
+    } catch (Exception e) {
+        return false
     }
 }
