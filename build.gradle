@@ -33,33 +33,41 @@ repositories {
         name = "sonatype"
         url = "https://oss.sonatype.org/content/groups/public/"
     }
+
     maven {
         url = uri("https://raw.githubusercontent.com/Shopkeepers/Repository/main/releases/")
     }
+
     maven { url 'https://jitpack.io' }
 }
 
 dependencies {
-    compileOnly "org.spigotmc:spigot-api:1.20.4-R0.1-SNAPSHOT"
+    compileOnly "org.spigotmc:spigot-api:1.20.4-R0.1-SNAPSHOT" // spigot api
 
-    implementation("de.exlll:configlib-paper:4.8.0")
-    implementation "com.google.inject:guice:7.0.0"
+    implementation("de.exlll:configlib-paper:4.8.0") // Config
+    implementation "com.google.inject:guice:7.0.0" // dependency injection
 
+    // spigot doesn't have adventure by default as paper does, so we need to add it
+    // high prob that some of these are redundant/not needed, but whatever
+    // todo: check which dependencies are actually needed
     implementation "net.kyori:adventure-text-serializer-plain:4.26.1"
     implementation "net.kyori:adventure-text-serializer-legacy:4.26.1"
     implementation "net.kyori:adventure-platform-bukkit:4.4.1"
     implementation "net.kyori:adventure-text-minimessage:4.26.1"
     implementation "net.kyori:adventure-api:4.26.1"
-    implementation 'net.kyori:adventure-text-serializer-ansi:4.17.0'
+    implementation 'net.kyori:adventure-text-serializer-ansi:4.17.0' // ANSI Support (cuz logger)
 
     compileOnly 'com.nisovin.shopkeepers:ShopkeepersAPI:2.25.0'
 
     compileOnly 'com.github.Ssomar-Developement:SCore:5.25.3.9'
+    // to add: ExecutableBlocks, ExecutableEvents, Oraxen, MMOItems
 
+    // Since rc3 the official lamp builds are broken (for older versions as 1.20.4), so we use a jitpack build
     implementation 'com.github.Reddishye.Lamp:lamp.common:6a2f380f00'
     implementation 'com.github.Reddishye.Lamp:lamp.bukkit:6a2f380f00'
     implementation 'com.github.Reddishye.Lamp:lamp.brigadier:6a2f380f00'
 }
+
 
 def targetJavaVersion = 21
 java {
@@ -81,7 +89,7 @@ tasks.withType(JavaCompile).configureEach {
 
 shadowJar {
     version = version
-    archiveClassifier.set('')
+    archiveClassifier.set('') // remove the classifier
     duplicatesStrategy = DuplicatesStrategy.EXCLUDE
 
     def relocateBase = 'es.redactado.shopkeepersEI.libs'
