@@ -70,9 +70,9 @@ dependencies {
     // to add: ExecutableBlocks, ExecutableEvents, Oraxen, MMOItems
 
     // Since rc3 the official lamp builds are broken (for older versions as 1.20.4), so we use a jitpack build
-    implementation 'com.github.Reddishye.Lamp:lamp.common:v4-9281a9ac18-1'
-    implementation 'com.github.Reddishye.Lamp:lamp.bukkit:v4-9281a9ac18-1'
-    implementation 'com.github.Reddishye.Lamp:lamp.brigadier:v4-9281a9ac18-1'
+    implementation 'com.github.Reddishye.Lamp:lamp.common:4902cffb45'
+    implementation 'com.github.Reddishye.Lamp:lamp.bukkit:4902cffb45'
+    implementation 'com.github.Reddishye.Lamp:lamp.brigadier:4902cffb45'
 }
 
 
