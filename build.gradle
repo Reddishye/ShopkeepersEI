@@ -38,7 +38,14 @@ repositories {
         url = uri("https://raw.githubusercontent.com/Shopkeepers/Repository/main/releases/")
     }
 
-    maven { url 'https://jitpack.io' }
+    maven {
+        url 'https://jitpack.io'
+        metadataSources {
+            mavenPom()
+            artifact()
+            ignoreGradleMetadataRedirection()
+        }
+    }
 }
 
 dependencies {
