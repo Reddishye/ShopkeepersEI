@@ -14,6 +14,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
     - Bumped `de.exlll:configlib-paper` from 4.7.0 to 4.8.0
     - Bumped `net.kyori:adventure-platform-bukkit` from 4.3.2 to 4.4.1
     - Bumped `net.kyori:adventure-text-serializer-ansi` from 4.17.0 to 4.26.1
+    - Bumped `com.github.Reddishye.Lamp` (Fork of Revxrsal/Lamp) to latest upstream.
 
 ### Fixed
 - Fixed Spotless branch detection in CI/CD environments
